@@ -90,6 +90,39 @@ class ApplianceController extends Controller
     }
     
     /**
+     * Publish multiple selected appliances
+     */
+    public function publishMultiple(Request $request)
+    {
+        try {
+            $appliance_ids = $request->input('appliance_ids', []);
+            
+            if (empty($appliance_ids)) {
+                return response()->json(['error' => 'No appliances selected'], 400);
+            }
+            
+            $appliances = Appliance::whereIn('id', $appliance_ids)->get();
+            
+            // Mark as published
+            foreach ($appliances as $appliance) {
+                $appliance->is_published = true;
+                $appliance->save();
+            }
+            
+            // Publish to Home Assistant
+            $this->publishToHomeAssistant($appliances);
+            
+            return response()->json([
+                'success' => true,
+                'message' => count($appliances) . ' appliances published successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error publishing multiple appliances: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    
+    /**
      * Helper method to publish appliances to Home Assistant
      */
     private function publishToHomeAssistant($appliances)

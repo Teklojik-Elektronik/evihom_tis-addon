@@ -171,4 +171,9 @@ return [
     'published' => 'Yayınlandı',
     'not_published' => 'Yayınlanmadı',
     'publish_status' => 'Yayın Durumu',
+    'publish_selected' => 'Seçilenleri Yayınla',
+    'no_appliances_selected' => 'Lütfen yayınlamak için cihaz seçin',
+    'publish_success' => 'Cihazlar başarıyla yayınlandı',
+    'publish_error' => 'Cihazlar yayınlanırken hata oluştu',
+    'device_appliance_tree' => 'Aygıt & Cihaz Ağacı',
 ];

@@ -48,6 +48,9 @@ Route::group([
     Route::crud('appliance-type', 'ApplianceTypeCrudController');
     // Route::crud('virtual-device', 'VirtualDeviceCrudController');
     Route::crud('appliance-channels', 'ApplianceChannelsCrudController');
+    
+    // Device-Appliance Tree View
+    Route::get('device-appliance-tree', 'DeviceApplianceTreeController@index')->name('device-appliance-tree');
     // resource routes
     Route::resource('handover', 'HandOverController');
     Route::crud('default-appliance', 'DefaultApplianceCrudController');

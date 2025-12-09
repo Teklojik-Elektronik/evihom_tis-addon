@@ -171,4 +171,9 @@ return [
     'published' => 'Published',
     'not_published' => 'Not Published',
     'publish_status' => 'Publish Status',
+    'publish_selected' => 'Publish Selected',
+    'no_appliances_selected' => 'Please select appliances to publish',
+    'publish_success' => 'Appliances published successfully',
+    'publish_error' => 'Error publishing appliances',
+    'device_appliance_tree' => 'Device & Appliance Tree',
 ];
