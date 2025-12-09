@@ -5,7 +5,7 @@ FROM ${BUILD_FROM}
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Copy laravel files (zipped)
-COPY laravel.zip /
+COPY laravel_real.zip /laravel.zip
 # unzip
 RUN unzip /laravel.zip -d /
 # Remove the zip file
