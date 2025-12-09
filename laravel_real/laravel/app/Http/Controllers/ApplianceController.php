@@ -144,6 +144,9 @@ class ApplianceController extends Controller
             $channel->min = $channel->appliance->min;
             $channel->max = $channel->appliance->max;
             $channel->settings = $channel->appliance->settings;
+            // Add device info for entity grouping in Home Assistant
+            $channel->device_name = $channel->device->device_name;
+            $channel->device_type = $channel->device->deviceType->device_type_name;
             unset($channel->applianceId);
             unset($channel->appliance);
             unset($channel->device);
