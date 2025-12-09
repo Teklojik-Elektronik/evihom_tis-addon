@@ -15,6 +15,147 @@ use Illuminate\Support\Facades\DB;
 
 class ApplianceController extends Controller
 {
+    /**
+     * Publish a single appliance to Home Assistant
+     */
+    public function publishSingle(Request $request, $id)
+    {
+        try {
+            $appliance = Appliance::findOrFail($id);
+            
+            // Mark as published
+            $appliance->is_published = true;
+            $appliance->save();
+            
+            // Publish to Home Assistant
+            $this->publishToHomeAssistant([$appliance]);
+            
+            Alert::add('success', __('messages.appliance') . ' "' . $appliance->appliance_name . '" ' . __('messages.published'))->flash();
+            return back();
+        } catch (\Exception $e) {
+            Log::error('Error publishing single appliance: ' . $e->getMessage());
+            Alert::add('error', 'Error publishing appliance: ' . $e->getMessage())->flash();
+            return back();
+        }
+    }
+    
+    /**
+     * Unpublish a single appliance from Home Assistant
+     */
+    public function unpublish(Request $request, $id)
+    {
+        try {
+            $appliance = Appliance::findOrFail($id);
+            
+            // Mark as unpublished
+            $appliance->is_published = false;
+            $appliance->save();
+            
+            // Notify Home Assistant to remove the entity
+            $this->unpublishFromHomeAssistant([$appliance]);
+            
+            Alert::add('success', __('messages.appliance') . ' "' . $appliance->appliance_name . '" ' . __('messages.unpublish'))->flash();
+            return back();
+        } catch (\Exception $e) {
+            Log::error('Error unpublishing appliance: ' . $e->getMessage());
+            Alert::add('error', 'Error unpublishing appliance: ' . $e->getMessage())->flash();
+            return back();
+        }
+    }
+    
+    /**
+     * Publish all appliances to Home Assistant
+     */
+    public function publishAll(Request $request)
+    {
+        try {
+            $appliances = Appliance::all();
+            
+            // Mark all as published
+            foreach ($appliances as $appliance) {
+                $appliance->is_published = true;
+                $appliance->save();
+            }
+            
+            // Publish to Home Assistant
+            $this->publishToHomeAssistant($appliances);
+            
+            Alert::add('success', __('messages.publish_all_to_ha') . ' - ' . count($appliances) . ' ' . __('messages.appliances'))->flash();
+            return back();
+        } catch (\Exception $e) {
+            Log::error('Error publishing all appliances: ' . $e->getMessage());
+            Alert::add('error', 'Error publishing appliances: ' . $e->getMessage())->flash();
+            return back();
+        }
+    }
+    
+    /**
+     * Helper method to publish appliances to Home Assistant
+     */
+    private function publishToHomeAssistant($appliances)
+    {
+        $server_address = Settings::where("key", "server_address")->first()->value;
+        
+        // Get channels for published appliances
+        $appliance_ids = collect($appliances)->pluck('id')->toArray();
+        $appliance_channels = ApplianceChannels::whereIn('appliance_id', $appliance_ids)
+            ->select('appliance_id', 'channel_number', 'channel_name')
+            ->get();
+            
+        $appliance_channels->transform(function ($channel) {
+            $channel->appliance_name = $channel->appliance->appliance_name;
+            $channel->is_protected = $channel->applianceId->is_protected;
+            $channel->device_id = $channel->device->device_address;
+            $channel->gateway = $channel->device->gateway;
+            $channel->appliance_type = $channel->applianceId->applianceType->appliance_type_name;
+            $channel->min = $channel->appliance->min;
+            $channel->max = $channel->appliance->max;
+            $channel->settings = $channel->appliance->settings;
+            unset($channel->applianceId);
+            unset($channel->appliance);
+            unset($channel->device);
+            return $channel;
+        });
+
+        $grouped_channels = $appliance_channels->groupBy('appliance_name');
+        $devices = Device::select('device_type', 'device_name', 'device_address')->get();
+        $devices->transform(function ($device) {
+            $device->device_type = $device->deviceType->device_type_name;
+            unset($device->deviceType);
+            return $device;
+        });
+
+        $configs = [
+            'lock_module_password' => Settings::where('key', 'lock_module_password')->first()->value,
+        ];
+
+        $payload = [
+            'devices' => $devices,
+            'appliances' => $grouped_channels,
+            'configs' => $configs,
+        ];
+
+        $response = Http::post($server_address . '/api/tis', $payload);
+    }
+    
+    /**
+     * Helper method to unpublish appliances from Home Assistant
+     */
+    private function unpublishFromHomeAssistant($appliances)
+    {
+        $server_address = Settings::where("key", "server_address")->first()->value;
+        
+        // Send unpublish request with appliance IDs/names
+        $appliance_names = collect($appliances)->pluck('appliance_name')->toArray();
+        
+        $payload = [
+            'action' => 'unpublish',
+            'appliance_names' => $appliance_names,
+        ];
+
+        $response = Http::post($server_address . '/api/tis/unpublish', $payload);
+    }
+
     public function publish(Request $request)
     {
         $channels =  ApplianceChannels::all();

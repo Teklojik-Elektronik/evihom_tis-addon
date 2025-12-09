@@ -34,6 +34,7 @@ class Appliance extends Model
         'max',
         'settings',
         'is_protected',
+        'is_published',
     ];
 
     // Define any relationships or additional methods here
@@ -107,9 +108,18 @@ class Appliance extends Model
         return $this->hasMany(ApplianceChannels::class, 'appliance_id');
     }
 
-    public function publish()
+    public function publishButton()
     {
-        return '<a class="btn btn-primary" href="' . route('appliances.publish') . '" data-toggle="tooltip" title="Publish appliances to homeassistant."><i class="la la-home"> </i> Publish to HomeAssistant</a>';
+        if ($this->is_published) {
+            return '<a class="btn btn-sm btn-danger" href="' . route('appliances.unpublish', $this->id) . '" data-toggle="tooltip" title="' . __('messages.unpublish_from_ha') . '"><i class="la la-times"></i> ' . __('messages.unpublish') . '</a>';
+        } else {
+            return '<a class="btn btn-sm btn-success" href="' . route('appliances.publish_single', $this->id) . '" data-toggle="tooltip" title="' . __('messages.publish_to_ha') . '"><i class="la la-check"></i> ' . __('messages.publish') . '</a>';
+        }
+    }
+
+    public function publishAll()
+    {
+        return '<a class="btn btn-primary" href="' . route('appliances.publish_all') . '" data-toggle="tooltip" title="' . __('messages.publish_all_to_ha') . '"><i class="la la-home"> </i> ' . __('messages.publish_all_to_ha') . '</a>';
     }
 
     public function defaultApplianceChannels()

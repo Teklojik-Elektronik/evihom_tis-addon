@@ -161,4 +161,14 @@ return [
     'publish_configuration_desc' => 'Aygıtlarınızı, cihazlarınızı ve cihaz kanallarınızı yapılandırdıktan sonra, son adım için hazırsınız. <a href=":url" class="action-link">Cihazlar</a> sekmesine gidin ve <span class="highlight">Home Assistant\'a Yayınla</span> düğmesine tıklayın.',
     'publish_configuration_desc2' => 'Yayınlama işleminin tamamlanmasını bekleyin. İşlem bittiğinde, kontrol panelinize eklenmeye hazır tüm yapılandırılmış varlıkları görmek için <a href="http://homeassistant.local:8123" class="action-link" target="_blank">Home Assistant Kontrol Paneli</a>\'ni ziyaret edin.',
     'publish_configuration_desc3' => '🎉 <strong>Tebrikler!</strong> Akıllı ev kurulumunuz artık tamamlandı ve kullanıma hazır.',
+    
+    // Publish/Unpublish
+    'publish' => 'Yayınla',
+    'unpublish' => 'Yayından Kaldır',
+    'publish_to_ha' => 'Home Assistant\'a Yayınla',
+    'unpublish_from_ha' => 'Home Assistant\'tan Kaldır',
+    'publish_all_to_ha' => 'Tümünü Home Assistant\'a Yayınla',
+    'published' => 'Yayınlandı',
+    'not_published' => 'Yayınlanmadı',
+    'publish_status' => 'Yayın Durumu',
 ];

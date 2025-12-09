@@ -42,6 +42,9 @@ Route::delete('devices/{device}', [DeviceController::class, 'destroy'])->name('d
 
 // routes for the ApplianceController
 Route::get('appliances/publish', [ApplianceController::class, 'publish'])->name('appliances.publish');
+Route::get('appliances/publish-all', [ApplianceController::class, 'publishAll'])->name('appliances.publish_all');
+Route::get('appliances/publish-single/{id}', [ApplianceController::class, 'publishSingle'])->name('appliances.publish_single');
+Route::get('appliances/unpublish/{id}', [ApplianceController::class, 'unpublish'])->name('appliances.unpublish');
 Route::get('appliances/check-existing', [ApplianceController::class, 'checkExisting'])->name('appliances.check-existing');
 Route::post('appliances/auto-create', [ApplianceController::class, 'auto_create'])->name('appliances.auto-create');
 

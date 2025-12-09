@@ -40,9 +40,22 @@ class ApplianceCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::setFromDb(); // set columns from db columns.
-        CRUD::addButtonFromModelFunction('top', 'publish', 'publish');
+        CRUD::addButtonFromModelFunction('top', 'publishAll', 'publishAll');
+        CRUD::addButtonFromModelFunction('line', 'publishButton', 'publishButton');
+        
         CRUD::column('device_id')->type('select2')->entity('deviceId')->attribute("device_name")->model('App\Models\Device');
         CRUD::column('appliance_type')->type('select2')->entity('applianceType')->attribute("appliance_type_name")->model('App\Models\ApplianceType');
+
+        // Add publish status column
+        CRUD::addColumn([
+            'name' => 'is_published',
+            'label' => __('messages.publish_status'),
+            'type' => 'boolean',
+            'options' => [
+                0 => __('messages.not_published'),
+                1 => __('messages.published')
+            ]
+        ]);
 
         CRUD::removeColumn('is_protected');
         CRUD::removeColumn('min');

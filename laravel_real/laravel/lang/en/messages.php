@@ -159,6 +159,16 @@ return [
     'auto_create_appliances_desc3' => 'Once complete, configure your appliances from the <a href=":url1" class="action-link">Appliances</a> tab. You can also <a href=":url2" class="action-link">Add Appliances</a> manually. Remember to configure appliance channels from the <a href=":url3" class="action-link">Appliance Channels</a> tab - every appliance requires at least one channel.',
     'publish_configuration' => 'Publish Configuration',
     'publish_configuration_desc' => 'After configuring your devices, appliances, and appliance channels, you\'re ready for the final step. Navigate to the <a href=":url" class="action-link">Appliances</a> tab and click the <span class="highlight">Publish to Home Assistant</span> button.',
-    'publish_configuration_desc2' => 'Wait for the publishing process to complete. Once finished, visit your <a href="http://homeassistant.local:8123" class="action-link" target="_blank">Home Assistant Dashboard</a> to see all your configured entities ready to be added to your dashboard.',
+    'publish_configuration_desc2' => 'Wait for the publishing process to complete. Once it finishes, visit the <a href="http://homeassistant.local:8123" class="action-link" target="_blank">Home Assistant Dashboard</a> to see all your configured entities ready to be added to your control panel.',
     'publish_configuration_desc3' => '🎉 <strong>Congratulations!</strong> Your smart home setup is now complete and ready to use.',
+    
+    // Publish/Unpublish
+    'publish' => 'Publish',
+    'unpublish' => 'Unpublish',
+    'publish_to_ha' => 'Publish to Home Assistant',
+    'unpublish_from_ha' => 'Remove from Home Assistant',
+    'publish_all_to_ha' => 'Publish All to Home Assistant',
+    'published' => 'Published',
+    'not_published' => 'Not Published',
+    'publish_status' => 'Publish Status',
 ];
