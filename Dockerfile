@@ -10,8 +10,8 @@ COPY laravel.zip /
 RUN unzip /laravel.zip -d /
 # Remove the zip file
 RUN rm /laravel.zip
-# Copy and replace the .env file
-COPY .env /laravel/.env
+# Copy .env.example as .env
+RUN cp /laravel/.env.example /laravel/.env
 
 COPY run.sh /
 RUN chmod a+x /run.sh
