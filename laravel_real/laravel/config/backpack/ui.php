@@ -73,10 +73,10 @@ return [
     // ------
 
     // Developer or company name. Shown in footer.
-    'developer_name' => 'TIS Control',
+    'developer_name' => 'Teklojik',
 
     // Developer website. Link in footer. Type false if you want to hide it.
-    'developer_link' => 'https://github.com/TISControlHass',
+    'developer_link' => 'https://www.teklojik.com/',
 
     // Show powered by Laravel Backpack in the footer? true/false
     'show_powered_by' => false,

@@ -85,8 +85,8 @@ return [
     'handover' => 'Handover',
     'handover_sheet' => 'Handover Sheet',
     
-    // CMS
-    'cms' => 'CMS',
+    // WhatsApp
+    'whatsapp' => 'WhatsApp Support',
     
     // Users
     'users' => 'Users',

@@ -85,8 +85,8 @@ return [
     'handover' => 'Teslim',
     'handover_sheet' => 'Teslim Formu',
     
-    // CMS
-    'cms' => 'CMS',
+    // WhatsApp
+    'whatsapp' => 'WhatsApp Destek',
     
     // Users
     'users' => 'Kullanıcılar',
