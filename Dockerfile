@@ -10,8 +10,10 @@ COPY laravel_real.zip /laravel.zip
 RUN unzip /laravel.zip -d /
 # Remove the zip file
 RUN rm /laravel.zip
-# Move laravel_real to laravel
-RUN mv /laravel_real /laravel
+# Move laravel_real/laravel to /laravel
+RUN mv /laravel_real/laravel /laravel
+# Remove empty laravel_real directory
+RUN rm -rf /laravel_real
 # Copy .env.example as .env
 RUN cp /laravel/.env.example /laravel/.env
 
