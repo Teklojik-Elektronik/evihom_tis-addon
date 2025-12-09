@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "e:\\TIS\\device-manager\\laravel\\database\\database.sqlite"
+  }
+]
