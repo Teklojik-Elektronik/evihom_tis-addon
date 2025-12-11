@@ -7,13 +7,16 @@
             <div class="card" style="background-color: #1a1c20; border-color: #3a3f47;">
                 <div class="card-header" style="background-color: #23262b; border-color: #3a3f47; color: #e3e6e9;">
                     <h3 class="card-title" style="color: #e3e6e9;">{{ __('messages.devices') }} & {{ __('messages.appliances') }}</h3>
-                    <div class="card-tools">
+                </div>
+                <div class="card-body p-0">
+                    <div style="padding: 15px 20px; background-color: #23262b; border-bottom: 1px solid #3a3f47; display: flex; gap: 10px; align-items: center;">
                         <button type="button" class="btn btn-primary" id="publishSelected">
                             <i class="la la-check"></i> {{ __('messages.publish_selected') }}
                         </button>
+                        <div style="flex: 1; max-width: 300px;">
+                            <input type="text" id="searchBox" class="form-control" placeholder="Search..." style="background-color: #2d3035; border-color: #3a3f47; color: #e3e6e9;">
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-0">
                     <div id="deviceTree"></div>
                 </div>
             </div>
@@ -95,6 +98,16 @@
     padding: 2px 8px;
     border-radius: 3px;
 }
+.delete-device-btn,
+.delete-appliance-btn {
+    margin-left: auto;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+.delete-device-btn:hover,
+.delete-appliance-btn:hover {
+    opacity: 1;
+}
 .publish-status.published {
     background: #d4edda;
     color: #155724;
@@ -105,16 +118,41 @@
 }
 </style>
 
+<!-- Data passed from server -->
+<script type="application/json" id="translations-data">
+    @json([
+        'appliances' => __('messages.appliances'),
+        'published' => __('messages.published'),
+        'notPublished' => __('messages.not_published'),
+        'noAppliancesSelected' => __('messages.no_appliances_selected'),
+        'publishSuccess' => __('messages.publish_success'),
+        'publishError' => __('messages.publish_error'),
+        'confirmDeleteDevice' => __('messages.confirm_delete_device'),
+        'confirmDeleteAppliance' => __('messages.confirm_delete_appliance'),
+        'deviceDeleted' => __('messages.device_deleted'),
+        'applianceDeleted' => __('messages.appliance_deleted'),
+        'deleteError' => __('messages.delete_error')
+    ])
+</script>
+<script type="application/json" id="devices-data">
+    @json($devices)
+</script>
+<script type="application/json" id="appliances-data">
+    @json($appliances)
+</script>
+
 @push('after_scripts')
 <script>
-let devices = @json($devices);
-let appliances = @json($appliances);
+// Parse data from JSON script tags
+const translations = JSON.parse(document.getElementById('translations-data').textContent);
+const devicesData = JSON.parse(document.getElementById('devices-data').textContent);
+const appliancesData = JSON.parse(document.getElementById('appliances-data').textContent);
 
 function renderDeviceTree() {
     const container = document.getElementById('deviceTree');
     
-    devices.forEach(device => {
-        const deviceAppliances = appliances.filter(a => a.device_id === device.id);
+    devicesData.forEach(device => {
+        const deviceAppliances = appliancesData.filter(a => a.device_id === device.id);
         
         const deviceGroup = document.createElement('div');
         deviceGroup.className = 'device-group';
@@ -126,7 +164,10 @@ function renderDeviceTree() {
             <i class="la la-angle-down collapse-icon"></i>
             <span class="device-name">${device.device_name}</span>
             <span class="device-info">${device.device_type} | ${device.device_address}</span>
-            <span class="badge badge-secondary">${deviceAppliances.length} {{ __('messages.appliances') }}</span>
+            <span class="badge badge-secondary">${deviceAppliances.length} ${translations.appliances}</span>
+            <button class="btn btn-sm btn-danger delete-device-btn" data-device-id="${device.id}" onclick="deleteDevice(${device.id}, event)">
+                <i class="la la-trash"></i>
+            </button>
         `;
         
         const applianceList = document.createElement('ul');
@@ -136,13 +177,19 @@ function renderDeviceTree() {
         deviceAppliances.forEach(appliance => {
             const li = document.createElement('li');
             li.className = 'appliance-item';
+            const publishStatusText = appliance.is_published ? translations.published : translations.notPublished;
+            const publishStatusClass = appliance.is_published ? 'published' : 'not-published';
+            
             li.innerHTML = `
                 <input type="checkbox" class="appliance-checkbox" data-appliance-id="${appliance.id}" data-device-id="${device.id}">
                 <span class="appliance-name">${appliance.appliance_name}</span>
                 <span class="appliance-type">${appliance.appliance_type_name}</span>
-                <span class="publish-status ${appliance.is_published ? 'published' : 'not-published'}">
-                    ${appliance.is_published ? '{{ __('messages.published') }}' : '{{ __('messages.not_published') }}'}
+                <span class="publish-status ${publishStatusClass}">
+                    ${publishStatusText}
                 </span>
+                <button class="btn btn-sm btn-danger delete-appliance-btn" data-appliance-id="${appliance.id}" onclick="deleteAppliance(${appliance.id}, event)">
+                    <i class="la la-trash"></i>
+                </button>
             `;
             applianceList.appendChild(li);
         });
@@ -194,7 +241,7 @@ document.getElementById('publishSelected').addEventListener('click', async () =>
     if (selectedAppliances.length === 0) {
         new Noty({
             type: 'warning',
-            text: '{{ __('messages.no_appliances_selected') }}'
+            text: translations.noAppliancesSelected
         }).show();
         return;
     }
@@ -212,7 +259,7 @@ document.getElementById('publishSelected').addEventListener('click', async () =>
         if (response.ok) {
             new Noty({
                 type: 'success',
-                text: '{{ __('messages.publish_success') }}'
+                text: translations.publishSuccess
             }).show();
             setTimeout(() => location.reload(), 1500);
         } else {
@@ -221,9 +268,113 @@ document.getElementById('publishSelected').addEventListener('click', async () =>
     } catch (error) {
         new Noty({
             type: 'error',
-            text: '{{ __('messages.publish_error') }}'
+            text: translations.publishError
         }).show();
     }
+});
+
+// Delete Device Function
+async function deleteDevice(deviceId, event) {
+    event.stopPropagation();
+    
+    if (!confirm(translations.confirmDeleteDevice)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/devices/${deviceId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        
+        if (response.ok) {
+            new Noty({
+                type: 'success',
+                text: translations.deviceDeleted
+            }).show();
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            throw new Error('Delete failed');
+        }
+    } catch (error) {
+        new Noty({
+            type: 'error',
+            text: translations.deleteError
+        }).show();
+    }
+}
+
+// Delete Appliance Function
+async function deleteAppliance(applianceId, event) {
+    event.stopPropagation();
+    
+    if (!confirm(translations.confirmDeleteAppliance)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/appliances/${applianceId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+        
+        if (response.ok) {
+            new Noty({
+                type: 'success',
+                text: translations.applianceDeleted
+            }).show();
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            throw new Error('Delete failed');
+        }
+    } catch (error) {
+        new Noty({
+            type: 'error',
+            text: translations.deleteError
+        }).show();
+    }
+}
+
+// Search Filter Function
+document.getElementById('searchBox').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const deviceGroups = document.querySelectorAll('.device-group');
+    
+    deviceGroups.forEach(group => {
+        const deviceHeader = group.querySelector('.device-header');
+        const deviceName = deviceHeader.querySelector('.device-name').textContent.toLowerCase();
+        const deviceInfo = deviceHeader.querySelector('.device-info').textContent.toLowerCase();
+        const applianceItems = group.querySelectorAll('.appliance-item');
+        
+        let deviceMatch = deviceName.includes(searchTerm) || deviceInfo.includes(searchTerm);
+        let hasVisibleAppliance = false;
+        
+        // Filter appliances
+        applianceItems.forEach(item => {
+            const applianceName = item.querySelector('.appliance-name').textContent.toLowerCase();
+            const applianceType = item.querySelector('.appliance-type').textContent.toLowerCase();
+            
+            if (searchTerm === '' || applianceName.includes(searchTerm) || applianceType.includes(searchTerm)) {
+                item.style.display = '';
+                hasVisibleAppliance = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Show device if it matches OR has visible appliances
+        if (searchTerm === '' || deviceMatch || hasVisibleAppliance) {
+            group.style.display = '';
+        } else {
+            group.style.display = 'none';
+        }
+    });
 });
 
 // Initialize

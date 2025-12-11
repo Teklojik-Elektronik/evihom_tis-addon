@@ -147,8 +147,29 @@ class DeviceController extends Controller
      */
     public function destroy(Device $device)
     {
-        $device->delete();
-        return redirect()->route('devices.index');
+        try {
+            // Unpublish all appliances from Home Assistant first
+            foreach ($device->appliances as $appliance) {
+                if ($appliance->is_published) {
+                    $applianceController = new \App\Http\Controllers\ApplianceController();
+                    $request = new \Illuminate\Http\Request();
+                    $applianceController->unpublish($request, $appliance->id);
+                }
+            }
+            
+            // Delete device (cascade will delete appliances)
+            $device->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Device and all appliances deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete device: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

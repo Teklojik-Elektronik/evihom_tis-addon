@@ -391,6 +391,25 @@ class ApplianceController extends Controller
      */
     public function destroy(Appliance $appliance)
     {
-        //
+        try {
+            // Unpublish from Home Assistant first
+            if ($appliance->is_published) {
+                $request = new \Illuminate\Http\Request();
+                $this->unpublish($request, $appliance->id);
+            }
+            
+            // Delete from database
+            $appliance->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Appliance deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete appliance: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

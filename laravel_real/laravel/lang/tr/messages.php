@@ -176,4 +176,11 @@ return [
     'publish_success' => 'Cihazlar başarıyla yayınlandı',
     'publish_error' => 'Cihazlar yayınlanırken hata oluştu',
     'device_appliance_tree' => 'Aygıt & Cihaz Ağacı',
+    
+    // Delete confirmation
+    'confirm_delete_device' => 'Bu aygıtı ve tüm cihazlarını silmek istediğinizden emin misiniz?',
+    'confirm_delete_appliance' => 'Bu cihazı silmek istediğinizden emin misiniz?',
+    'device_deleted' => 'Aygıt başarıyla silindi',
+    'appliance_deleted' => 'Cihaz başarıyla silindi',
+    'delete_error' => 'Silme işlemi sırasında hata oluştu',
 ];

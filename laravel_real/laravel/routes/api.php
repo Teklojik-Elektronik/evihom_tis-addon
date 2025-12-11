@@ -48,6 +48,7 @@ Route::post('appliances/publish-multiple', [ApplianceController::class, 'publish
 Route::get('appliances/unpublish/{id}', [ApplianceController::class, 'unpublish'])->name('appliances.unpublish');
 Route::get('appliances/check-existing', [ApplianceController::class, 'checkExisting'])->name('appliances.check-existing');
 Route::post('appliances/auto-create', [ApplianceController::class, 'auto_create'])->name('appliances.auto-create');
+Route::delete('appliances/{appliance}', [ApplianceController::class, 'destroy'])->name('appliances.destroy');
 
 Route::get('search', function (Request $request) {
     $search = $request->get('term');

@@ -176,4 +176,11 @@ return [
     'publish_success' => 'Appliances published successfully',
     'publish_error' => 'Error publishing appliances',
     'device_appliance_tree' => 'Device & Appliance Tree',
+    
+    // Delete confirmation
+    'confirm_delete_device' => 'Are you sure you want to delete this device and all its appliances?',
+    'confirm_delete_appliance' => 'Are you sure you want to delete this appliance?',
+    'device_deleted' => 'Device deleted successfully',
+    'appliance_deleted' => 'Appliance deleted successfully',
+    'delete_error' => 'Error occurred during deletion',
 ];
