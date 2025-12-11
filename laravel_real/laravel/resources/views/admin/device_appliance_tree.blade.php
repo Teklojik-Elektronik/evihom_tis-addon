@@ -4,9 +4,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('messages.devices') }} & {{ __('messages.appliances') }}</h3>
+            <div class="card" style="background-color: #1a1c20; border-color: #3a3f47;">
+                <div class="card-header" style="background-color: #23262b; border-color: #3a3f47; color: #e3e6e9;">
+                    <h3 class="card-title" style="color: #e3e6e9;">{{ __('messages.devices') }} & {{ __('messages.appliances') }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-primary" id="publishSelected">
                             <i class="la la-check"></i> {{ __('messages.publish_selected') }}
@@ -23,18 +23,19 @@
 
 <style>
 .device-group {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #3a3f47;
 }
 .device-header {
     padding: 15px 20px;
-    background: #f8f9fa;
+    background: #2d3035;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #e3e6e9;
 }
 .device-header:hover {
-    background: #e9ecef;
+    background: #3a3f47;
 }
 .device-checkbox {
     width: 18px;
@@ -51,26 +52,28 @@
 .device-name {
     font-weight: 600;
     flex: 1;
+    color: #e3e6e9;
 }
 .device-info {
-    color: #6c757d;
+    color: #9da5b0;
     font-size: 0.9em;
 }
 .appliance-list {
     padding: 0;
     margin: 0;
     list-style: none;
-    background: #fff;
+    background: #23262b;
 }
 .appliance-item {
     padding: 12px 20px 12px 60px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #3a3f47;
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #e3e6e9;
 }
 .appliance-item:hover {
-    background: #f8f9fa;
+    background: #2d3035;
 }
 .appliance-checkbox {
     width: 16px;
@@ -78,12 +81,13 @@
 }
 .appliance-name {
     flex: 1;
+    color: #e3e6e9;
 }
 .appliance-type {
-    color: #6c757d;
+    color: #e3e6e9;
     font-size: 0.85em;
     padding: 2px 8px;
-    background: #e9ecef;
+    background: #3a3f47;
     border-radius: 3px;
 }
 .publish-status {

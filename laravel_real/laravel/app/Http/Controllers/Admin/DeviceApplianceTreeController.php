@@ -11,14 +11,18 @@ class DeviceApplianceTreeController extends Controller
 {
     public function index()
     {
-        $devices = Device::with('deviceType')->get()->map(function ($device) {
-            return [
-                'id' => $device->id,
-                'device_name' => $device->device_name,
-                'device_address' => $device->device_address,
-                'device_type' => $device->deviceType->device_type_name ?? 'Unknown',
-            ];
-        });
+        // Only show devices that have at least one appliance
+        $devices = Device::with('deviceType')
+            ->has('appliances')
+            ->get()
+            ->map(function ($device) {
+                return [
+                    'id' => $device->id,
+                    'device_name' => $device->device_name,
+                    'device_address' => $device->device_address,
+                    'device_type' => $device->deviceType->device_type_name ?? 'Unknown',
+                ];
+            });
 
         $appliances = Appliance::with(['applianceType', 'deviceId'])->get()->map(function ($appliance) {
             return [
