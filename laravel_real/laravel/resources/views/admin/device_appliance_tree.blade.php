@@ -120,25 +120,25 @@
 
 <!-- Data passed from server -->
 <script type="application/json" id="translations-data">
-    @json([
-        'appliances' => __('messages.appliances'),
-        'published' => __('messages.published'),
-        'notPublished' => __('messages.not_published'),
-        'noAppliancesSelected' => __('messages.no_appliances_selected'),
-        'publishSuccess' => __('messages.publish_success'),
-        'publishError' => __('messages.publish_error'),
-        'confirmDeleteDevice' => __('messages.confirm_delete_device'),
-        'confirmDeleteAppliance' => __('messages.confirm_delete_appliance'),
-        'deviceDeleted' => __('messages.device_deleted'),
-        'applianceDeleted' => __('messages.appliance_deleted'),
-        'deleteError' => __('messages.delete_error')
-    ])
+{!! json_encode([
+    'appliances' => __('messages.appliances'),
+    'published' => __('messages.published'),
+    'notPublished' => __('messages.not_published'),
+    'noAppliancesSelected' => __('messages.no_appliances_selected'),
+    'publishSuccess' => __('messages.publish_success'),
+    'publishError' => __('messages.publish_error'),
+    'confirmDeleteDevice' => __('messages.confirm_delete_device'),
+    'confirmDeleteAppliance' => __('messages.confirm_delete_appliance'),
+    'deviceDeleted' => __('messages.device_deleted'),
+    'applianceDeleted' => __('messages.appliance_deleted'),
+    'deleteError' => __('messages.delete_error')
+]) !!}
 </script>
 <script type="application/json" id="devices-data">
-    @json($devices)
+{!! json_encode($devices) !!}
 </script>
 <script type="application/json" id="appliances-data">
-    @json($appliances)
+{!! json_encode($appliances) !!}
 </script>
 
 @push('after_scripts')
