@@ -51,6 +51,9 @@ class DeviceCrudController extends CrudController
         CRUD::addButtonFromModelFunction('top', 'load project', 'load_project');
         CRUD::addButton('top', 'auto_create_appliances', 'view', 'vendor.backpack.crud.buttons.auto_create_appliances_button');
         CRUD::addButtonFromModelFunction('top', 'Device', 'scan_devices');
+        
+        // Add device channels button (drawer style)
+        CRUD::addButton('line', 'device_channels', 'view', 'vendor.backpack.crud.buttons.device-channels-button');
 
         // Add a toggle filter to hide/show devices with associated appliances and channels
         CRUD::addFilter([

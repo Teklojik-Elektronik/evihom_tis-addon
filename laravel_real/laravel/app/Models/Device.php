@@ -30,6 +30,13 @@ class Device extends Model
         'device_type',
         'device_address',
         'gateway',
+        'is_grouped',
+        'available_channels',
+    ];
+
+    protected $casts = [
+        'available_channels' => 'array',
+        'is_grouped' => 'boolean',
     ];
 
     // model events
@@ -167,6 +174,77 @@ class Device extends Model
     public function scan_devices($crud = false)
     {
         return view('vendor.backpack.crud.buttons.scan-devices-button')->render();
+    }
+
+    /**
+     * Get available channels for this device based on device type
+     */
+    public function getAvailableChannels()
+    {
+        if ($this->available_channels) {
+            return $this->available_channels;
+        }
+
+        $channels = [];
+        $defaultAppliances = $this->deviceType->defaultAppliances;
+
+        foreach ($defaultAppliances as $defaultAppliance) {
+            $applianceType = ApplianceType::find($defaultAppliance->appliance_type);
+            
+            $channelGroup = [
+                'type' => $applianceType->appliance_type_name,
+                'identifier' => $defaultAppliance->appliance_identifier,
+                'is_protected' => $applianceType->is_protected,
+                'channels' => []
+            ];
+
+            // Get default channels for this appliance type
+            $defaultChannels = DefaultApplianceChannel::where('appliance_type_id', $defaultAppliance->appliance_type)->get();
+            
+            foreach ($defaultChannels as $channel) {
+                $channelGroup['channels'][] = [
+                    'name' => $channel->channel_name,
+                    'number' => $defaultAppliance->appliance_identifier,
+                ];
+            }
+
+            $channels[] = $channelGroup;
+        }
+
+        return $channels;
+    }
+
+    /**
+     * Create selected appliances from channel selection
+     */
+    public function createSelectedAppliances(array $selectedChannels)
+    {
+        foreach ($selectedChannels as $selection) {
+            $applianceType = ApplianceType::where('appliance_type_name', $selection['type'])->first();
+            
+            $appliance = Appliance::create([
+                'device_id' => $this->id,
+                'appliance_name' => $this->device_name . '_' . $selection['type'] . '_' . $selection['identifier'],
+                'appliance_type' => $applianceType->id,
+                'is_protected' => $selection['is_protected'] ?? false,
+                'channel_identifier' => $selection['identifier'],
+            ]);
+
+            // Create appliance channels
+            foreach ($selection['channels'] as $channel) {
+                ApplianceChannels::updateOrCreate(
+                    [
+                        'appliance_id' => $appliance->id,
+                        'channel_name' => $channel['name'],
+                    ],
+                    [
+                        'channel_number' => $channel['number'],
+                    ]
+                );
+            }
+        }
+
+        $this->update(['is_grouped' => true]);
     }
 
     public function auto_create_appliances($crud = false)

@@ -65,7 +65,7 @@ class DeviceController extends Controller
                     }
 
                     if (in_array($deviceTypeCodeStr, DeviceType::all()->pluck('device_model_number')->toArray())) {
-                        Device::updateOrCreate(
+                        $device = Device::updateOrCreate(
                             [
                                 'device_address' => implode(',', $device['device_id'])
                             ],
@@ -75,6 +75,17 @@ class DeviceController extends Controller
                                 'device_name' => $deviceTypeName . " " . implode(', ', $device['device_id']),
                             ]
                         );
+                        
+                        // Auto-create appliances for this device if it has none
+                        if ($device->appliances()->count() == 0) {
+                            try {
+                                $device->create_appliances();
+                                Log::info("Auto-created appliances for device: " . $device->device_name);
+                            } catch (\Exception $e) {
+                                Log::warning("Could not auto-create appliances for device " . $device->device_name . ": " . $e->getMessage());
+                            }
+                        }
+                        
                         $processed++;
                     } else {
                         Log::info("Device type " . $deviceTypeCodeStr . " not found");
@@ -138,5 +149,61 @@ class DeviceController extends Controller
     {
         $device->delete();
         return redirect()->route('devices.index');
+    }
+
+    /**
+     * Get available channels for a device
+     */
+    public function getChannels(Device $device)
+    {
+        try {
+            $channels = $device->getAvailableChannels();
+            return response()->json([
+                'success' => true,
+                'device' => [
+                    'id' => $device->id,
+                    'name' => $device->device_name,
+                    'address' => $device->device_address,
+                    'is_grouped' => $device->is_grouped,
+                ],
+                'channels' => $channels
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to get channels: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to load channels'
+            ], 500);
+        }
+    }
+
+    /**
+     * Create appliances from selected channels
+     */
+    public function createAppliancesFromSelection(Request $request, Device $device)
+    {
+        try {
+            $selectedChannels = $request->input('channels', []);
+            
+            if (empty($selectedChannels)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No channels selected'
+                ], 400);
+            }
+
+            $device->createSelectedAppliances($selectedChannels);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Appliances created successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to create appliances: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to create appliances: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

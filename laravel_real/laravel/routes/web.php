@@ -21,6 +21,8 @@ Route::get('/', function () {
 });
 
 Route::get('devices/scan', [DeviceController::class, 'scan'])->name('devices.scan');
+Route::get('devices/{device}/channels', [DeviceController::class, 'getChannels'])->name('devices.channels');
+Route::post('devices/{device}/create-appliances', [DeviceController::class, 'createAppliancesFromSelection'])->name('devices.create_appliances');
 
 // Language routes
 Route::post('language/change', [LanguageController::class, 'changeLanguage'])->name('language.change');
