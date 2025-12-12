@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.11] - 2025-12-12
+
+### Fixed
+- **TIS-MER-AC4G-PB** default appliance configuration corrected
+  - Added 3 relay outputs (switch)
+  - Added 8 binary sensors (4 buttons + 3 digital inputs + 1 temperature sensor)
+  - Confirmed 1 AC entity (includes both climate and floorheat modes)
+  - Validated configuration via hex packet analysis (12 active channels)
+
+### Documentation
+- Analyzed 80+ device models with missing configuration
+- Identified Gang/Button panels (xG, xS) as most common missing category
+- Documented VEN AC Relay series (xR) configuration gaps
+- Listed Hotel Input/Output modules requiring specification
+
+### Technical
+- Device configuration validated against OpCode 0x2024/0x18 response (28 bytes)
+- AC functionality confirmed via "Enable AC Page" checkbox in device UI
+- Protocol analysis: 6 HVAC modes supported (Cool/Heat/Dry/Fan/Auto/Floorheat)
+
+## [1.5.10] - 2025-12-11
+
+### Fixed
+- Fixed Blade template syntax error in device_appliance_tree.blade.php
+  - Changed @json() to {!! json_encode() !!} for proper rendering
+  - Resolved ParseError with JavaScript variable initialization
+
 ## [1.5.9] - 2025-01-XX
 
 ### Added

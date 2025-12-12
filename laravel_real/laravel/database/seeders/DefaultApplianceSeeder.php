@@ -990,11 +990,11 @@ class DefaultApplianceSeeder extends Seeder
             ],
             [
                 'model' => 'TIS-MER-AC4G-PB',
-                'switch' => '0',
+                'switch' => '3',        // 3 relay output
                 'dimmer' => '0',
                 'rgbw' => '0',
-                'Binary Sensor' => '0',
-                'AC' => '0',
+                'Binary Sensor' => '8',  // 4 buton + 3 digital input + 1 temperature sensor = 8 binary sensor
+                'AC' => '1',            // 1 AC (klima + floorheat)
                 'security' => '0',
                 'motor' => '0',
             ],
